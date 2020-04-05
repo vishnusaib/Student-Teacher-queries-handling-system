@@ -1,0 +1,108 @@
+void faculty_Queue(int np) {
+ 
+    int count, arrival_Time, burst_Time, quantum_time;
+    struct process_Struct f_p[np];
+ 
+    for(count = 0; count < np; count++) {
+        printf("Enter the details of Process[%d]", count+1);
+        puts("");
+        printf("Process Name : ");
+        scanf("%s", f_p[count].process_name);
+ 
+        printf("Arrival Time : ");
+        scanf("%d", &f_p[count].arrival_time);
+ 
+        printf("Burst Time : ");
+        scanf("%d", &f_p[count].burst_time);
+        puts("");
+    }
+    printf("Now, enter the quantum time for FACULTY queue : ");
+    scanf("%d", &quantum_time);
+ 
+ 
+    // sorting the processes by their ARRIVAL time.
+    // if the ARRIVAL time is same then scheduling is based on FCFS.
+    for(count = 0; count < np; count++) 
+	{
+        int x;
+		for( x = count +1; x < count; x++)
+		{
+            if(f_p[count].arrival_time > f_p[x].arrival_time) 
+			{
+                temp_Struct = f_p[count];
+                f_p[count] = f_p[x];
+                f_p[x] = temp_Struct;
+            }
+        }
+    }
+ 
+    // initialy all the burst time is remaining and completion of process is zero.
+    for(count = 0; count < np; count++) {
+        f_p[count].remaining = f_p[count].burst_time;
+        f_p[count].completion_time = 0;
+    }
+ 
+    int total_time, queue, round_robin[20];
+    total_time = 0;
+    queue = 0;
+    round_robin[queue] = 0;
+ 
+   
+    int flag, x, n, z, waiting_time = 0;
+    do {
+        for(count = 0; count < np; count++){
+            if(total_time >= f_p[count].arrival_time){
+                z = 0;
+                for(x = 0; x <= queue; x++) {
+                    if(round_robin[x] == count) {
+                        z++;
+                    }
+                }
+                if(z == 0) {
+                    queue++;
+                    round_robin[queue] == count;
+                }
+            }
+        }
+ 
+        if(queue == 0) {
+            n = 0;
+        }
+        if(f_p[n].remaining == 0) {
+            n++ ;
+        }
+        if(n > queue) {
+            n = (n - 1) % queue;
+        }
+        if(n <= queue) {
+            if(f_p[n].remaining > 0) {
+                if(f_p[n].remaining < quantum_time){
+                    total_time += f_p[n].remaining;
+                    f_p[n].remaining = 0;
+                }else {
+                    total_time += quantum_time;
+                    f_p[n].remaining -= quantum_time;
+                }
+                f_p[n].completion_time = total_time;
+            }
+            n++;
+        }
+        flag = 0;
+       
+        for(count = 0; count < np; count++) {
+            if(f_p[count].remaining > 0) {
+                flag++;
+            }
+        }
+    }while(flag != 0);
+ 
+    puts("\t\t\t*****   ROUND ROBIN ALGORITHM OUTPUT   *****");
+    printf("\n|\tProcess Name\t  |\tArrival Time\t  |\tBurst Time\t |\tCompletion Time  \t|\n");
+ 
+    for(count = 0; count < np; count++){
+        waiting_time = f_p[count].completion_time - f_p[count].burst_time - f_p[count].arrival_time;
+ 
+        printf("\n|\t  %s\t    |\t  %d\t   |\t  %d\t   |\t  %d\t   |\n", f_p[count].process_name, f_p[count].arrival_time, f_p[count].burst_time, f_p[count].completion_time);
+    }
+ 
+}
